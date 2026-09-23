@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>拍照参考 · plog 爆款逻辑引擎</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header class="top">
+  <div class="brand">
+    <span class="logo">◱</span>
+    <div>
+      <h1>拍照参考</h1>
+      <p>说清你要拍什么、在哪拍、什么光 —— 它给你机位角度、物品摆法、调色数值和找图入口</p>
+    </div>
+  </div>
+  <div class="top-act">
+    <button type="button" class="btn ghost js-random">🎲 随机灵感</button>
+    <button type="button" class="btn primary js-go">生成方案</button>
+  </div>
+</header>
+
+<main>
+  <!-- ============ 输入 ============ -->
+  <section class="panel">
+    <div class="field">
+      <label>1 · 今天想拍什么</label>
+      <input id="subjectText" type="text" placeholder="例如：咖啡 / 早餐 / 书桌 / 花 / 街景 / 我家猫 / 新买的口红…">
+      <div class="chips" id="quickSubj"></div>
+      <p class="hint">库里没有的东西也能拍 —— 它会按语义猜出场景类型，给你通用摆法。</p>
+    </div>
+
+    <div class="field">
+      <label>2 · 在哪拍</label>
+      <div class="opts" id="envList"></div>
+    </div>
+
+    <div class="field">
+      <label>3 · 什么光 <small>这一项对调色数值影响最大</small></label>
+      <div class="opts wide" id="lightList"></div>
+    </div>
+
+    <div class="field">
+      <label>4 · 想要什么风格</label>
+      <div class="styles" id="styleList"></div>
+    </div>
+
+    <div class="field split2">
+      <div>
+        <label>5 · 用什么拍</label>
+        <div class="opts" id="deviceList">
+          <button type="button" class="opt" data-device="phone"><b>手机</b><small>日常 plog 主力</small></button>
+          <button type="button" class="opt" data-device="camera"><b>相机</b><small>微单 / 单反</small></button>
+        </div>
+      </div>
+      <div>
+        <label>6 · 手边有什么道具 <small>可多选，也可以不选</small></label>
+        <div class="opts" id="propList"></div>
+      </div>
+    </div>
+
+    <div class="go-row">
+      <button type="button" class="btn primary big js-go">生成我的拍照方案</button>
+      <span class="hint">生成后按「摆放 → 机位 → 调色 → 找参考 → 发布」的顺序看就行。</span>
+    </div>
+  </section>
+
+  <!-- ============ 结果 ============ -->
+  <section id="result">
+    <div id="head"></div>
+
+    <nav class="tabs" id="tabs">
+      <button type="button" class="tab on" data-pane="place">物品摆法</button>
+      <button type="button" class="tab" data-pane="shots">机位与构图</button>
+      <button type="button" class="tab" data-pane="color">调色参数</button>
+      <button type="button" class="tab" data-pane="logic">爆款逻辑</button>
+      <button type="button" class="tab" data-pane="refs">找爆款参考图</button>
+      <button type="button" class="tab" data-pane="post">标题与发布</button>
+    </nav>
+
+    <div id="place" class="pane on"></div>
+    <div id="shots" class="pane"></div>
+    <div id="color" class="pane"></div>
+    <div id="logic" class="pane"></div>
+    <div id="refs" class="pane"></div>
+    <div id="post" class="pane"></div>
+
+    <div class="actions">
+      <button type="button" class="btn ghost" id="saveBtn">☆ 存进我的方案</button>
+      <button type="button" class="btn ghost" id="mdBtn">↓ 导出 Markdown</button>
+      <button type="button" class="btn ghost" id="copyAll">⧉ 复制当前页文字</button>
+    </div>
+  </section>
+
+  <!-- ============ 收藏 ============ -->
+  <section class="panel fav" id="favWrap" style="display:none">
+    <h3>我的方案 <small>存在本机浏览器里，换设备不会同步</small></h3>
+    <ul id="favList"></ul>
+  </section>
+
+  <footer class="foot">
+    <h3>怎么把审美练出来（这软件只是拐杖）</h3>
+    <ol class="num">
+      <li><b>每天只练一件事。</b>这周只练「俯拍 90 度」，下周只练「侧光」，比每天乱拍十张有用得多。</li>
+      <li><b>拍完必须修。</b>原图直出能看的人，都是先修过几千张的。用软件里的参数，从「照着抄」开始。</li>
+      <li><b>建一个参考墙。</b>在「找爆款参考图」里挑 10 张存下来（微信收藏 / 相册建相册都行）。这 10 张就是你的审美基线。</li>
+      <li><b>用数字说话。</b>别问「这张好看吗」，问「主体在不在三分交叉点、留白够不够、画面几种颜色」。这三个问题答得上，图就不差。</li>
+      <li><b>同一组东西拍满 3 个机位再收工。</b>俯拍、45 度、平视，回家选一张，比现场纠结快得多。</li>
+    </ol>
+    <p class="hint">所有数据只存在你本机浏览器；「找爆款参考图」是直接打开对应平台的搜索页，你看到的永远是当下真实的爆款内容。</p>
+  </footer>
+</main>
+
+<div id="toast" class="toast"></div>
+
+<!-- 封面图灯箱：点真实封面墙里的图看大图 -->
+<div id="lightbox" class="lightbox">
+  <img id="lightboxImg" alt="参考图大图">
+  <div class="lightbox-tip">点任意处 / 按 Esc 关闭</div>
+</div>
+
+<script src="data.js"></script>
+<script src="app.js"></script>
+<script>
+/* 封面图数据注入。两条路径：
+   1) 在线版：动态插 <script src="refs.js">（用 script 而非 fetch —— file:// 下 fetch 会被 CORS 拦）
+   2) 手机版：build.js --phone 已把 refs_embedded.js 内联在 data.js 之前，
+      那时 app.js 还没加载、注入函数不存在，所以数据先挂在 window.REFS_DATA 上，
+      这里（app.js 之后）补一次注入。
+   都没有就什么都不做，软件自动退回「平台搜索深链」。 */
+(function(){
+  function inject(){
+    if (window.REFS_DATA && typeof window.setRefsData === 'function') {
+      window.setRefsData(window.REFS_DATA);
+      return true;
+    }
+    return false;
+  }
+  /* 手机版：数据已在 window.REFS_DATA，直接注入 */
+  if (window.REFS_DATA) { inject(); return; }
+  /* 在线版：尝试加载同目录的 refs.js */
+  var s = document.createElement('script');
+  s.src = 'refs_embedded.js';
+  s.onload = inject;
+  s.onerror = function(){ /* 没有 refs.js 就什么都不做，深链照常用 */ };
+  document.body.appendChild(s);
+})();
+</script>
+</body>
+</html>
